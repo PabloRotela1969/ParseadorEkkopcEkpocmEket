@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+
+  <dataFiles>
+
+    <file name="ekkopc_gim.txt" table="BCP_EKKOPC">
+
+      <field name="cod_comprar"     tipo="decimal"	len="9"   pos="1"	/>
+      <field name="proveedor"   	  tipo="varchar"	len="11"	pos="12"  />
+      <field name="sociedad"        tipo="varchar"	len="9"   pos="2"	/>
+      <field name="clase_doc"       tipo="varchar"	len="9"	  pos="4"  />
+      <field name="creado_el"       tipo="varchar" len="10" 	pos="8"  />
+
+    </file>
+
+    <file name="ekpocm_gim.txt" table="BCP_EKPOCM">
+
+      <field name="cod_compra"        tipo="decimal" len="15"	    pos="1"/>
+      <field name="posicion"   	      tipo="varchar" len="11"	    pos="2"/>
+      <field name="txt_breve"         tipo="varchar" len="40" 	  pos="6"/>
+      <field name="material"          tipo="varchar" len="15"	    pos="7"/>
+      <field name="cantidad_pedido"   tipo="decimal" len="14"	    pos="16"/>
+      <field name="UM_pedido"         tipo="varchar" len="12"	    pos="17"/>
+      <field name="centro"            tipo="varchar" len="7"	    pos="9"/>
+      <field name="contrato"          tipo="varchar" len="11"	    pos="29"/>
+      <field name="posicion_contrato" tipo="varchar" len="12"	    pos="30"/>
+
+
+    </file>
+
+    <file name="eket_gim.txt" table="BCP_EKET">
+
+      <field name="cod_comprar"         tipo="decimal"	len="15"	  pos="1"/>
+      <field name="posicion"   	        tipo="varchar"  len="9"   	pos="2"/>
+      <field name="fecha_entrega"       tipo="varchar" len="10"	    pos="4"/>
+      <field name="fecha_entrega_esta"  tipo="varchar" len="12"	    pos="5"/>
+      <field name="cantidad_reparto"    tipo="decimal"  len="17"	  pos="7"/>
+      <field name="cantidad_entregada"  tipo="decimal"  len="17"	  pos="9"/>
+
+    </file>
+
+  </dataFiles>
+
+</config>
