@@ -34,7 +34,15 @@ namespace ParseadorEkkopcEkpocmEket
         /// <param name="nombreTabla"></param>
         public void borrarTabla(string nombreTabla)
         {
-            ejecutarScript("delete from " + nombreTabla);
+            try
+            {
+                ejecutarScript("delete from " + nombreTabla);
+            }
+            catch (Exception e1)
+            {
+                throw new Exception("Error al borrar la tabla : " + nombreTabla + " detalle : " + e1.Message);
+            }
+            
         }
 
         /// <summary>
@@ -42,11 +50,51 @@ namespace ParseadorEkkopcEkpocmEket
         /// </summary>
         public void ejecutarSecuenciaDeStoredsFinal()
         {
-            ejecutarScript("WDC_Carga_Pedidos_SAP");
-            ejecutarScript("WDC_Carga_WDC_PedidosPosItem_SAP");
-            ejecutarScript("WDC_ActualizarPedidos_SAP");
-            ejecutarScript("WDC_ActualizarPedidos_PosItem_SAP");
-            ejecutarScript("WDC_EliminarPedidos_PosItem_SAP");
+            try
+            {
+                ejecutarScript("WDC_Carga_Pedidos_SAP");
+            }
+            catch (Exception e1)
+            {
+                throw new Exception("Error en WDC_Carga_Pedidos_SAP : " + e1.Message);
+            }
+
+            try
+            {
+                ejecutarScript("WDC_Carga_WDC_PedidosPosItem_SAP");
+            }
+            catch (Exception e1)
+            {
+                throw new Exception("WDC_Carga_WDC_PedidosPosItem_SAP : " + e1.Message);
+            }
+
+            try
+            {
+                ejecutarScript("WDC_ActualizarPedidos_SAP");
+            }
+            catch (Exception e1)
+            {
+                throw new Exception("WDC_ActualizarPedidos_SAP : " + e1.Message);
+            }
+
+            try
+            {
+                ejecutarScript("WDC_ActualizarPedidos_PosItem_SAP");
+            }
+            catch (Exception e1)
+            {
+                throw new Exception("WDC_ActualizarPedidos_PosItem_SAP : " + e1.Message);
+            }
+
+            try
+            {
+                ejecutarScript("WDC_EliminarPedidos_PosItem_SAP");
+            }
+            catch (Exception e1)
+            {
+                throw new Exception("WDC_EliminarPedidos_PosItem_SAP : " + e1.Message);
+            }
+            
         }
 
         /// <summary>
@@ -139,6 +187,7 @@ namespace ParseadorEkkopcEkpocmEket
             }
             catch (Exception e)
             {
+                throw new Exception("Error al llenar tabla " + tblToFill + " : " + e.Message);
             }
             finally
             {

@@ -12,6 +12,8 @@ using System.Windows.Forms;
 
 namespace ParseadorEkkopcEkpocmEket
 {
+
+
     /// <summary>
     /// Esta clase se basa en el Demonio Dioxlog para procesar los 3 archivos, permite parsearlos, verificar cada dato leído a partir del archivo de preferencias
     /// y registrar en log de errores, si un dato de un renglón no pasa la validación, se registra y toda la celda no se ingresa, el proceso prosigue con la siguiente linea hasta leer completamente
@@ -160,7 +162,8 @@ namespace ParseadorEkkopcEkpocmEket
 
         /// <summary>
         /// Este método recibe la ruta del archivo a leer y las preferencias de ese archivo para poderlo parsear
-        /// La idea es que se lee una fila del arhivo, se parsea cada celda por ";" pero se toman las columnas desde el archivo de preferencias
+        /// Se toma el archivo de Preferencias del archivo a leer y se extraen datos en función al largo de los titulos, de modo que si algún
+        /// campo contiene un carácter de parseo ";" se ignora y se lee como parte del dato
         /// Si la celda pasa las validaciones, se ingresa a la lista de celdas correctas para formar un renglón
         /// Si la celda falla alguna validación, se deja log de error como constancia y se saltea el resto de las celdas que forman la línea
         /// Si el renglón no tuvo celdas erróneas se ingresa a la lista del "nuevoArchivoDeDatos", a continuación se lee la siguiente línea reptitiendo
@@ -173,7 +176,6 @@ namespace ParseadorEkkopcEkpocmEket
         {
             string linea;
             string datoParseadoDeUnaLinea;
-            string[] arrayDeLineaParseada;
             int numeroLineaLeida = 0;
             int numeroLineaErrada = 0;
             bool IngresarLinea = true;
@@ -187,16 +189,24 @@ namespace ParseadorEkkopcEkpocmEket
             filasDatos nuevaFilaDeDatos;
             while ((linea = lector.ReadLine()) != null)
             {
-                arrayDeLineaParseada = linea.Split(';');
                 nuevaFilaDeDatos = new filasDatos();
                 numeroLineaLeida++;
                 IngresarLinea = true;
+                if (numeroLineaLeida == 1)
+                {
+                    calcularMedidasDeCadaCelda(archivo_, linea); 
+                }
+                
+
                 foreach (campo campoDePreferencias in archivo_.listaDeCampos)
                 {
-                    datoParseadoDeUnaLinea = arrayDeLineaParseada[campoDePreferencias.posicion];
-                    if (numeroLineaLeida == 1 || esCeldaValida(datoParseadoDeUnaLinea, numeroLineaLeida, campoDePreferencias, archivo_.nombre, campoDePreferencias.nombre))
+
+                    datoParseadoDeUnaLinea = linea.Substring(campoDePreferencias.desde, campoDePreferencias.largo);
+
+                    if (numeroLineaLeida ==1 || esCeldaValida(datoParseadoDeUnaLinea, numeroLineaLeida, campoDePreferencias, archivo_.nombre, campoDePreferencias.nombre))
                     {
-                        nuevaFilaDeDatos.celdas.Add(datoParseadoDeUnaLinea.TrimEnd());
+                        datoParseadoDeUnaLinea = transformarFormatoFechaAgeneral(datoParseadoDeUnaLinea);
+                        nuevaFilaDeDatos.celdas.Add(datoParseadoDeUnaLinea);
                     }
                     else
                     {
@@ -211,6 +221,8 @@ namespace ParseadorEkkopcEkpocmEket
                     nuevoArchivoDatos.renglones.Add(nuevaFilaDeDatos);
 
                 }
+
+                
             }
             pasosExitososContenido = " Del archivo " + archivo_.nombre + " se procesaron " + numeroLineaLeida.ToString() + "lineas sin problemas ";
             pasosExitososContenido = pasosExitososContenido + numeroLineaErrada.ToString() + " con errores ";
@@ -226,6 +238,79 @@ namespace ParseadorEkkopcEkpocmEket
         }
 
         /// <summary>
+        /// Esta función es necesaria para igualar formatos regionales al general
+        /// </summary>
+        /// <param name="fecha"></param>
+        /// <returns></returns>
+        private string transformarFormatoFechaAgeneral(string fecha)
+        {
+            string salida = fecha;
+            char barra = '/';
+
+            if (fecha != "" && fecha.Contains(barra))
+            {
+                string[] date = fecha.Split(barra);
+                if (date.Length == 3)
+                {
+                    string dia = date[0];
+                    string mes = date[1];
+                    string año = date[2];
+                    salida = año + mes + dia;
+                }
+
+            }
+            return salida;
+        }
+
+        /// <summary>
+        /// Este método surge de la necesidad de usar los títulos como norma de ancho de columna, por lo que cargo en el objeto archivo
+        /// los campos desde para saber desde donde calcular el substring desde las lineas con datos, y el largo lo sobreescribo puesto que 
+        /// había sido cargado anteriormente, pero si cambian el ancho de los titulos, el archivo de Preferencias queda obsoleto en las longitudes
+        /// En el metodo, parseo los titulos por ";" en un array de tramos, si el tramo es el contemplado en la posición traida del archivo
+        /// Preferencias.xml, lleno el campo "desde" y sobreescribo el campo "largo" con el largo del tramo de título y busco la siguiente
+        /// posición a considerar
+        /// solo marca las posiciones
+        /// </summary>
+        /// <param name="Archivo">Cualquiera de los 3 archivos, Ekpocm, Ekkopc o Eket</param>
+        /// <param name="lineaDeTitulo">Es el título de cualquiera de los 3 archivos mencionados arriba</param>
+        private void calcularMedidasDeCadaCelda(archivo Archivo, string lineaDeTitulo)
+        {
+            lineaDeTitulo = lineaDeTitulo.Substring(0, lineaDeTitulo.Length - 1); // quito el último ";" del titulo antes de splitearlo
+            string [] tramosDeTitulo = lineaDeTitulo.Split(';');
+            List<campo> camposDesdeTitulos = new List<campo>();
+            int columnaPosicion = 0;
+            int longitudAcumulada = 0;
+            foreach (string tramo in tramosDeTitulo)
+            {
+                campo columna = new campo();
+                columna.nombre = tramo;
+                columna.desde = longitudAcumulada;
+                columna.largo = tramo.Length;
+                columna.posicion = columnaPosicion;
+                camposDesdeTitulos.Add(columna);
+                longitudAcumulada += tramo.Length;
+                longitudAcumulada += 1; // salteo el carácter ";" 
+                columnaPosicion++;
+            }
+
+            for (int i = 0; i < Archivo.listaDeCampos.Count; i++)
+            {
+                for(int j = 0; j<camposDesdeTitulos.Count; j++)
+                {
+                    if (Archivo.listaDeCampos[i].posicion == camposDesdeTitulos[j].posicion)
+                    {
+                        Archivo.listaDeCampos[i].desde = camposDesdeTitulos[j].desde;
+                        Archivo.listaDeCampos[i].largo = camposDesdeTitulos[j].largo;
+                        break;
+                    }
+                }
+            }
+            
+
+        }
+
+
+        /// <summary>
         /// Método que somete a validaciones a cada dato leído, registrando en LOG si el dato no pasa alguna validación, devolviendo FALSE como valor de retorno
         /// </summary>
         /// <param name="celda">ES EL DATO A VALIDAR llega genéricamente como string pero si se espera un numerico se trata de parsear, por ejemplo</param>
@@ -234,18 +319,10 @@ namespace ParseadorEkkopcEkpocmEket
         /// <param name="nombreArchivo">nombre del archivo al que pertenece el dato a validar (para el LOG)</param>
         /// <param name="nombreDeCampo">nombre de la columna al que pertenece la celda (para el LOG)</param>
         /// <returns></returns>
-        private bool esCeldaValida(string celda, int linea ,campo campo , string nombreArchivo , string nombreDeCampo)
+        private bool esCeldaValida(string celda, int linea, campo campo, string nombreArchivo, string nombreDeCampo)
         {
             bool respuesta = true;
             string texto;
-
-
-            if (celda.Length < campo.largo)
-            {
-                texto = "archivo: " + nombreArchivo + " linea:" + linea.ToString() + " campo: " + nombreDeCampo + " valor: " + celda + " con largo distinto de " + campo.largo.ToString();
-                utiles.escribirArchivoTexto(ruta, texto);
-                respuesta = false;
-            }
 
             switch (campo.tipo)
             {
@@ -403,13 +480,42 @@ namespace ParseadorEkkopcEkpocmEket
         private void btnProcesar_Click(object sender, EventArgs e)
         {
             this.lblEstado.Text = "INICIADO";
+            this.Text = "PROCESANDO ARCHIVOS";
             Proceso();
-            this.lblEstado.Text = "TERMINADO";
+            this.lblEstado.Text = ".........TERMINADO";
+            this.Text = "Proceso de archivos";
         }
 
 
         #endregion
 
+        #region -------------------información al pasar el mouse sobre controles -------------------------
+        private void btnProcesar_MouseHover(object sender, EventArgs e)
+        {
+            ttInformacion.Show("   Este botón inicia el procesamiento de los archivos  \n   eket_GIM.txt, ekpocm_GIM.txt y ekkopc_GIM.txt \n   al final notificará su terminación  ", this.btnProcesar,5000);
+        }
+
+        private void frmProcesamiento_MouseHover(object sender, EventArgs e)
+        {
+            ttInformacion.Show("   Tenga presente que los 3 archivos:\n   eket_GIM.txt, ekpocm_GIM.txt y ekkopc_GIM.txt \n   deben tener los títulos completos antes de procesar", this, 5000);
+        }
+
+        private void btnAbrirCarpetaLectura_MouseHover(object sender, EventArgs e)
+        {
+            ttInformacion.Show("   Este botón abre la carpeta donde deben depositarse los archivos  \n    eket_GIM.txt, ekpocm_GIM.txt y ekkopc_GIM.txt \n    para ser procesados", this.btnAbrirCarpetaLectura,8000);
+        }
+
+        private void btnArchivoConfiguracion_MouseHover(object sender, EventArgs e)
+        {
+            ttInformacion.Show("    Este botón muestra un archivo XML con la configuración de formato que deben cumplir los archivos \n    eket_GIM.txt, ekpocm_GIM.txt y ekkopc_GIM.txt \n   para poder ser procesados ", this.btnArchivoConfiguracion,8000);
+        }
+
+        private void btnLog_MouseHover(object sender, EventArgs e)
+        {
+            ttInformacion.Show("    Este botón abre en la aplicación que la máquina tenga asignada para ver archivos de texto, el registro de errores de la aplicación \n     si hubiera algún problema, genere una incidencia adjuntando este archivo a la misma para poder analizarlo ", this.btnLog,12000);
+        }
+
+        #endregion
 
 
     }

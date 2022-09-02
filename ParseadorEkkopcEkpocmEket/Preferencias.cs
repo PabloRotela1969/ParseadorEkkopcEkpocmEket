@@ -5,13 +5,13 @@ using System.Text;
 
 namespace ParseadorEkkopcEkpocmEket
 {
-    public struct campo
+    public class campo
     {
         public string nombre;
         public string tipo;
         public int largo;
         public int posicion;
-
+        public int desde;
     }
     public class archivo
     {

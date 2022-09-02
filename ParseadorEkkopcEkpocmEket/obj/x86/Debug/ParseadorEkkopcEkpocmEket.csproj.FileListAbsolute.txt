@@ -16,3 +16,11 @@ E:\PROJECT\PERSONAL\FORMS\OTROS\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmE
 E:\PROJECT\PERSONAL\FORMS\OTROS\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\obj\x86\Debug\ParseadorEkkopcEkpocmEket.frmProcesamiento.resources
 E:\PROJECT\PERSONAL\FORMS\OTROS\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\obj\x86\Debug\ParseadorEkkopcEkpocmEket.Properties.Resources.resources
 E:\PROJECT\PERSONAL\FORMS\OTROS\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\obj\x86\Debug\ParseadorEkkopcEkpocmEket.csproj.GenerateResource.Cache
+D:\COMPARTIDA\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\bin\Debug\ParseadorEkkopcEkpocmEket.exe.config
+D:\COMPARTIDA\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\obj\x86\Debug\ParseadorEkkopcEkpocmEket.exe
+D:\COMPARTIDA\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\obj\x86\Debug\ParseadorEkkopcEkpocmEket.pdb
+D:\COMPARTIDA\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\bin\Debug\ParseadorEkkopcEkpocmEket.exe
+D:\COMPARTIDA\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\bin\Debug\ParseadorEkkopcEkpocmEket.pdb
+D:\COMPARTIDA\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\obj\x86\Debug\ParseadorEkkopcEkpocmEket.frmProcesamiento.resources
+D:\COMPARTIDA\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\obj\x86\Debug\ParseadorEkkopcEkpocmEket.Properties.Resources.resources
+D:\COMPARTIDA\ParseadorEkkopcEkpocmEket\ParseadorEkkopcEkpocmEket\obj\x86\Debug\ParseadorEkkopcEkpocmEket.csproj.GenerateResource.Cache
